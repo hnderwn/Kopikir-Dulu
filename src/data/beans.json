@@ -1,0 +1,223 @@
+[
+  {
+    "id": "arabica-gayo-washed",
+    "name": "Arabica Gayo Washed",
+    "origin": "Aceh, Indonesia",
+    "notes": ["citrus", "caramel", "clean finish"],
+    "variants": {
+      "100": 45000,
+      "200": 75000,
+      "1000": 290000
+    }
+  },
+  {
+    "id": "arabica-gayo-honey",
+    "name": "Arabica Gayo Honey",
+    "origin": "Aceh, Indonesia",
+    "notes": ["honey sweetness", "orange peel", "smooth acidity"],
+    "variants": {
+      "100": 48000,
+      "200": 78000,
+      "1000": 300000
+    }
+  },
+  {
+    "id": "arabica-kintamani-washed",
+    "name": "Arabica Kintamani Washed",
+    "origin": "Bali, Indonesia",
+    "notes": ["lemon", "tea-like", "bright"],
+    "variants": {
+      "100": 45000,
+      "200": 75000,
+      "1000": 290000
+    }
+  },
+  {
+    "id": "arabica-kintamani-honey",
+    "name": "Arabica Kintamani Honey",
+    "origin": "Bali, Indonesia",
+    "notes": ["peach", "floral", "sweet"],
+    "variants": {
+      "100": 48000,
+      "200": 78000,
+      "1000": 300000
+    }
+  },
+  {
+    "id": "arabica-toraja-washed",
+    "name": "Arabica Toraja Washed",
+    "origin": "Sulawesi, Indonesia",
+    "notes": ["earthy", "spice", "deep body"],
+    "variants": {
+      "100": 47000,
+      "200": 76000,
+      "1000": 285000
+    }
+  },
+  {
+    "id": "arabica-toraja-natural",
+    "name": "Arabica Toraja Natural",
+    "origin": "Sulawesi, Indonesia",
+    "notes": ["red berries", "winey", "rich"],
+    "variants": {
+      "100": 49000,
+      "200": 78000,
+      "1000": 300000
+    }
+  },
+  {
+    "id": "arabica-flores-bajawa",
+    "name": "Arabica Flores Bajawa",
+    "origin": "NTT, Indonesia",
+    "notes": ["chocolate", "nutty", "smooth"],
+    "variants": {
+      "100": 45000,
+      "200": 75000,
+      "1000": 290000
+    }
+  },
+  {
+    "id": "arabica-wamena",
+    "name": "Arabica Papua Wamena",
+    "origin": "Papua, Indonesia",
+    "notes": ["herbal", "sweet spice", "light body"],
+    "variants": {
+      "100": 47000,
+      "200": 76000,
+      "1000": 290000
+    }
+  },
+  {
+    "id": "arabica-java-preanger",
+    "name": "Arabica Java Preanger",
+    "origin": "West Java, Indonesia",
+    "notes": ["cocoa", "nutty", "balanced"],
+    "variants": {
+      "100": 43000,
+      "200": 72000,
+      "1000": 280000
+    }
+  },
+  {
+    "id": "arabica-linang-atu",
+    "name": "Arabica Atu Lintang",
+    "origin": "Aceh, Indonesia",
+    "notes": ["herbal", "dark chocolate", "smooth"],
+    "variants": {
+      "100": 45000,
+      "200": 75000,
+      "1000": 290000
+    }
+  },
+
+  {
+    "id": "robusta-lampung",
+    "name": "Robusta Lampung",
+    "origin": "Lampung, Indonesia",
+    "notes": ["dark chocolate", "caramel", "low acidity"],
+    "variants": {
+      "100": 25000,
+      "200": 45000,
+      "1000": 190000
+    }
+  },
+  {
+    "id": "robusta-temanggung",
+    "name": "Robusta Temanggung",
+    "origin": "Central Java, Indonesia",
+    "notes": ["smoky", "chocolate", "bold"],
+    "variants": {
+      "100": 23000,
+      "200": 42000,
+      "1000": 185000
+    }
+  },
+  {
+    "id": "robusta-bengkulu",
+    "name": "Robusta Bengkulu",
+    "origin": "Bengkulu, Indonesia",
+    "notes": ["cocoa", "woody", "medium body"],
+    "variants": {
+      "100": 24000,
+      "200": 44000,
+      "1000": 190000
+    }
+  },
+  {
+    "id": "robusta-sidikalang",
+    "name": "Robusta Sidikalang",
+    "origin": "Sumatra, Indonesia",
+    "notes": ["earthy", "dark spice", "strong"],
+    "variants": {
+      "100": 26000,
+      "200": 46000,
+      "1000": 195000
+    }
+  },
+  {
+    "id": "robusta-karo",
+    "name": "Robusta Karo",
+    "origin": "Sumatra Utara, Indonesia",
+    "notes": ["nutty", "bold", "bittersweet"],
+    "variants": {
+      "100": 25000,
+      "200": 45000,
+      "1000": 190000
+    }
+  },
+  {
+    "id": "robusta-toraja",
+    "name": "Robusta Toraja",
+    "origin": "Sulawesi, Indonesia",
+    "notes": ["herbal", "cocoa", "strong aroma"],
+    "variants": {
+      "100": 27000,
+      "200": 48000,
+      "1000": 198000
+    }
+  },
+  {
+    "id": "robusta-bali",
+    "name": "Robusta Bali",
+    "origin": "Bali, Indonesia",
+    "notes": ["caramel", "roasty", "smooth bitterness"],
+    "variants": {
+      "100": 23000,
+      "200": 42000,
+      "1000": 185000
+    }
+  },
+  {
+    "id": "robusta-gayo",
+    "name": "Robusta Gayo",
+    "origin": "Aceh, Indonesia",
+    "notes": ["dark cocoa", "spice", "heavy body"],
+    "variants": {
+      "100": 26000,
+      "200": 46000,
+      "1000": 195000
+    }
+  },
+  {
+    "id": "robusta-flores",
+    "name": "Robusta Flores",
+    "origin": "NTT, Indonesia",
+    "notes": ["woody", "nutty", "strong finish"],
+    "variants": {
+      "100": 25000,
+      "200": 44000,
+      "1000": 190000
+    }
+  },
+  {
+    "id": "robusta-papua",
+    "name": "Robusta Papua",
+    "origin": "Papua, Indonesia",
+    "notes": ["bold", "earthy", "bittersweet"],
+    "variants": {
+      "100": 27000,
+      "200": 48000,
+      "1000": 200000
+    }
+  }
+]
