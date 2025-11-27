@@ -34,6 +34,17 @@ const testimonials = [
   }
 ]
 
+const resolveBeanImage = (bean) => {
+  if (bean?.image) {
+    if (bean.image.startsWith('http') || bean.image.startsWith('data:') || bean.image.startsWith('/')) {
+      return bean.image
+    }
+    return `/${bean.image.replace(/^\/+/, '')}`
+  }
+
+  return `/img/${bean?.id ?? 'placeholder'}/1.jpg`
+}
+
 function SectionTitle({ eyebrow, title, description }) {
   return (
     <div className="text-center max-w-2xl mx-auto">
@@ -47,11 +58,13 @@ function SectionTitle({ eyebrow, title, description }) {
 }
 
 function BeanCard({ bean, isAuthenticated, onAddToCart }) {
+  const beanImage = resolveBeanImage(bean)
+
   return (
     <article className="group rounded-3xl bg-white shadow-[0_25px_60px_rgba(43,29,18,0.08)] overflow-hidden flex flex-col">
       <div className="relative h-60 overflow-hidden">
         <img
-          src={bean.image}
+          src={beanImage}
           alt={bean.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -568,6 +581,8 @@ export default function App() {
     const quantity = Number(cartForm.quantity) || 1
     const pricePerUnit = selectedBean.variants?.[cartForm.variant] ?? 0
 
+    const beanImage = resolveBeanImage(selectedBean)
+
     setCartItems((prev) => {
       const existingIndex = prev.findIndex(
         (item) => item.beanId === selectedBean.id && item.variant === cartForm.variant
@@ -590,7 +605,7 @@ export default function App() {
           variant: cartForm.variant,
           pricePerUnit,
           quantity,
-          image: selectedBean.image
+          image: beanImage
         }
       ]
     })
