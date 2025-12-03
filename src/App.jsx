@@ -134,13 +134,13 @@ function BeanCard({ bean, isAuthenticated, onAddToCart }) {
             ))}
           </ul>
         </div>
-        <div className="flex items-center justify-between mt-auto">
+        <div className="flex items-center gap-2 justify-between mt-auto">
           <p className="text-2xl font-display text-kopi-mid">
             {bean?.variants?.['200'] ? `Rp${bean.variants['200'].toLocaleString('id-ID')}` : 'Custom Roast'}
           </p>
           <button
             onClick={() => onAddToCart(bean)}
-            className="inline-flex items-center gap-2 rounded-full bg-kopi-mid text-white px-5 py-2 text-sm font-semibold shadow-lg shadow-kopi-mid/30 transition hover:bg-kopi-dark"
+            className="inline-flex items-center gap-1 rounded-full bg-kopi-mid text-white px-3 py-2 text-sm font-semibold shadow-lg shadow-kopi-mid/30 transition hover:bg-kopi-dark"
           >
             {isAuthenticated ? 'Masukkan ke keranjang' : 'Masuk untuk checkout'}
             <span aria-hidden>→</span>
@@ -414,7 +414,7 @@ function CartDrawer({ open, items, onClose, onRemove, onCheckout, onQuantityChan
       <div
         ref={drawerRef}
         onClick={(event) => event.stopPropagation()}
-        className={`h-full w-full max-w-md lg:max-w-lg bg-white p-6 shadow-2xl transform cart-drawer-panel ${
+        className={`h-full max-h-full w-[78vw] max-w-[420px] overflow-y-auto rounded-l-[32px] bg-white p-5 shadow-2xl sm:w-full sm:max-w-md sm:p-6 lg:max-w-lg cart-drawer-panel ${
           isClosing ? 'cart-drawer-panel--closing' : 'cart-drawer-panel--opening'
         }`}
       >
@@ -837,9 +837,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-kopi-light text-kopi-dark">
-      <header className="sticky top-0 z-40 bg-gradient-to-r from-kopi-dark via-[#3b2619] to-kopi-dark/95 px-6 py-4 sm:px-10 md:px-16 lg:px-24 text-white shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur">
-        <nav className="flex items-center justify-between text-sm uppercase tracking-[0.4em]">
-          <span className="font-display text-2xl tracking-tight">Kopikir Saja</span>
+      <header className="sticky top-0 z-40 bg-gradient-to-r from-kopi-dark via-[#3b2619] to-kopi-dark/95 px-4 py-3 sm:px-10 md:px-16 lg:px-24 text-white shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur">
+        <nav className="flex flex-wrap items-center justify-between gap-3 text-[0.65rem] uppercase tracking-[0.25em] sm:gap-6 sm:text-sm sm:tracking-[0.4em]">
+          <span className="font-display text-xl tracking-tight sm:text-2xl">Kopikir Saja</span>
           <div className="hidden sm:flex gap-8">
             <a href="#marketplace" className="hover:text-kopi-light">
               Pasar Kopi
@@ -847,18 +847,21 @@ export default function App() {
             <a href="#story" className="hover:text-kopi-light">
               Cerita
             </a>
-            <a href="#contact" className="hover:text-kopi-light">
               Kontak
+            <a href="#contact" className="hover:text-kopi-light">
             </a>
           </div>
-          <div className="flex gap-3">
-            <a href="#ritual" className="rounded-full border border-white/40 px-4 py-2 text-xs hover:bg-white/10">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <a
+              href="#ritual"
+              className="rounded-full text-transform: capitalize; border border-white/40 px-3 py-1.5 text-[0.6rem] hover:bg-white/10 sm:px-4 sm:py-2 sm:text-xs"
+            >
               Panduan Seduh
             </a>
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="rounded-full border border-white/40 px-4 py-2 text-xs flex items-center gap-2"
+              className="rounded-full border border-white/40 px-3 py-1.5 text-[0.6rem] flex items-center gap-2 sm:px-4 sm:py-2 sm:text-xs"
             >
               Keranjang
               <span className="rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-kopi-dark">
@@ -869,7 +872,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-kopi-dark"
+                className="rounded-full bg-white/90 px-3 py-1.5 text-[0.6rem] font-semibold text-kopi-dark sm:px-4 sm:py-2 sm:text-xs"
               >
                 Keluar
               </button>
@@ -877,7 +880,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-kopi-dark"
+                className="rounded-full bg-white/90 px-3 py-1.5 text-[0.6rem] font-semibold text-kopi-dark sm:px-4 sm:py-2 sm:text-xs"
               >
                 Masuk / Daftar
               </button>
