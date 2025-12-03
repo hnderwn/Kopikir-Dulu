@@ -7,6 +7,10 @@
   background-color: #f4e7d4;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -15,4 +19,66 @@ body {
 
 a {
   text-decoration: none;
+}
+
+.cart-drawer-panel {
+  will-change: transform, opacity;
+}
+
+.cart-drawer-panel--opening {
+  animation: cart-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.cart-drawer-panel--closing {
+  animation: cart-slide-out 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes cart-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cart-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.beans-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .beans-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.beans-expand .bean-card {
+  animation: bean-float 0.75s ease forwards;
+}
+
+@keyframes bean-float {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+  }
 }

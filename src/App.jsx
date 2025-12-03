@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import beans from './data/beans.json'
 import supabase from './lib/supabaseClient'
 
@@ -34,6 +34,38 @@ const testimonials = [
   }
 ]
 
+const storyOverview = {
+  title: 'Kenapa namanya Kopikir Dulu?',
+  body: [
+    'Kami bermula dari obrolan tugas kuliah yang berakhir jadi percobaan cupping setiap akhir pekan. Nama “Kopikir Dulu” lahir karena setiap keputusan penting di kampus pasti ditemani kopi segar.',
+    'Sekarang kami mengurasi lot mikro dari Aceh sampai Papua, menyangrainya di Bandung, dan berbagi ritual mindful brew ke lebih banyak teman kampus, kafe kecil, dan komunitas kreatif.'
+  ],
+  cta: {
+    label: 'Ngobrol bareng di WhatsApp',
+    href: 'https://chat.whatsapp.com/Jpb0C58niUL1s6bPdXHWQA'
+  }
+}
+
+const storyMilestones = [
+  {
+    year: '2022',
+    title: 'Batch perdana',
+    description: 'Mulai menyangrai 3 lot favorit teman satu kelas memakai roaster pinjaman.'
+  },
+  {
+    year: '2023',
+    title: 'Komunitas kampus',
+    description: 'Membuka sesi cupping keliling kampus dan menyiapkan blend custom untuk acara mahasiswa.'
+  },
+  {
+    year: '2024',
+    title: 'Kopikir Dulu marketplace',
+    description: 'Merilis situs ini agar siapa pun bisa pesan lot mikro langsung dari koperasi petani.'
+  }
+]
+
+const WHATSAPP_LINK = 'https://chat.whatsapp.com/Jpb0C58niUL1s6bPdXHWQA'
+
 const resolveBeanImage = (bean) => {
   if (bean?.image) {
     if (bean.image.startsWith('http') || bean.image.startsWith('data:') || bean.image.startsWith('/')) {
@@ -45,14 +77,29 @@ const resolveBeanImage = (bean) => {
   return `/img/${bean?.id ?? 'placeholder'}/1.jpg`
 }
 
-function SectionTitle({ eyebrow, title, description }) {
+function SectionTitle({ eyebrow, title, description, theme = 'light' }) {
+  const themeStyles = {
+    light: {
+      eyebrow: 'text-kopi-mid',
+      title: 'text-kopi-dark',
+      description: 'text-kopi-dark/80'
+    },
+    dark: {
+      eyebrow: 'text-white/70',
+      title: 'text-white',
+      description: 'text-white/80'
+    }
+  }
+
+  const styles = themeStyles[theme] ?? themeStyles.light
+
   return (
     <div className="text-center max-w-2xl mx-auto">
-      <p className="uppercase tracking-[0.3em] text-sm text-kopi-mid font-semibold">
+      <p className={`uppercase tracking-[0.3em] text-sm font-semibold ${styles.eyebrow}`}>
         {eyebrow}
       </p>
-      <h2 className="mt-3 text-3xl md:text-4xl font-display text-kopi-dark">{title}</h2>
-      <p className="mt-4 text-base md:text-lg text-kopi-dark/80">{description}</p>
+      <h2 className={`mt-3 text-3xl md:text-4xl font-display ${styles.title}`}>{title}</h2>
+      <p className={`mt-4 text-base md:text-lg ${styles.description}`}>{description}</p>
     </div>
   )
 }
@@ -61,7 +108,7 @@ function BeanCard({ bean, isAuthenticated, onAddToCart }) {
   const beanImage = resolveBeanImage(bean)
 
   return (
-    <article className="group rounded-3xl bg-white shadow-[0_25px_60px_rgba(43,29,18,0.08)] overflow-hidden flex flex-col">
+    <article className="group bean-card rounded-3xl bg-white shadow-[0_25px_60px_rgba(43,29,18,0.08)] overflow-hidden flex flex-col transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(43,29,18,0.12)] max-w-sm mx-auto w-full">
       <div className="relative h-60 overflow-hidden">
         <img
           src={beanImage}
@@ -357,20 +404,30 @@ function CheckoutModal({ open, items, form, onChange, onSubmit, onClose, loading
   )
 }
 
-function CartDrawer({ open, items, onClose, onRemove, onCheckout }) {
+function CartDrawer({ open, items, onClose, onRemove, onCheckout, onQuantityChange, drawerRef, isClosing }) {
   if (!open) return null
 
   const subtotal = items.reduce((sum, item) => sum + item.pricePerUnit * item.quantity, 0)
 
   return (
-    <div className="fixed inset-0 z-40 flex justify-end bg-black/40">
-      <div className="h-full w-full max-w-md bg-white p-6 shadow-2xl">
-        <div className="flex items-start justify_between">
+    <div className="fixed inset-0 z-40 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose}>
+      <div
+        ref={drawerRef}
+        onClick={(event) => event.stopPropagation()}
+        className={`h-full w-full max-w-md lg:max-w-lg bg-white p-6 shadow-2xl transform cart-drawer-panel ${
+          isClosing ? 'cart-drawer-panel--closing' : 'cart-drawer-panel--opening'
+        }`}
+      >
+        <div className="flex items-start justify-between">
           <div>
             <p className="uppercase tracking-[0.4em] text-xs text-kopi-mid">Keranjang</p>
             <h3 className="mt-2 text-2xl font-display text-kopi-dark">Pesananmu</h3>
           </div>
-          <button type="button" onClick={onClose} className="text-2xl text-kopi-dark/60 hover:text-kopi-dark">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-2xl text-kopi-dark/60 hover:text-kopi-dark transition-colors"
+          >
             ×
           </button>
         </div>
@@ -390,15 +447,36 @@ function CartDrawer({ open, items, onClose, onRemove, onCheckout }) {
                   </div>
                   <div className="flex-1">
                     <p className="font-semibold text-kopi-dark">{item.beanName}</p>
-                    <p className="text-sm text-kopi-dark/60">{item.variant} g × {item.quantity}</p>
-                    <p className="text-sm font-semibold text-kopi-mid">
+                    <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+                      <p className="text-sm text-kopi-dark/60">{item.variant} g</p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onQuantityChange(item.id, -1)}
+                          className="h-7 w-7 rounded-full border border-kopi-dark/20 text-sm font-bold text-kopi-dark transition hover:bg-kopi-light"
+                          aria-label={`Kurangi ${item.beanName}`}
+                        >
+                          −
+                        </button>
+                        <span className="min-w-[2rem] text-center text-sm font-semibold text-kopi-dark">{item.quantity}</span>
+                        <button
+                          type="button"
+                          onClick={() => onQuantityChange(item.id, 1)}
+                          className="h-7 w-7 rounded-full border border-kopi-dark/20 text-sm font-bold text-kopi-dark transition hover:bg-kopi-light"
+                          aria-label={`Tambah ${item.beanName}`}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-kopi-mid">
                       Rp{(item.pricePerUnit * item.quantity).toLocaleString('id-ID')}
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => onRemove(item.id)}
-                    className="text-xs uppercase tracking-[0.2em] text-kopi-dark/60 hover:text-red-500"
+                    className="text-xs uppercase tracking-[0.2em] text-kopi-dark/60 hover:text-red-500 transition"
                   >
                     Hapus
                   </button>
@@ -416,7 +494,7 @@ function CartDrawer({ open, items, onClose, onRemove, onCheckout }) {
             type="button"
             onClick={onCheckout}
             disabled={!items.length}
-            className="w-full rounded-full bg-kopi-mid px-6 py-3 font-semibold text-white shadow-lg shadow-kopi-mid/30 transition hover:bg-kopi-dark disabled:opacity-60"
+            className="w-full rounded-full bg-kopi-mid px-6 py-3 font-semibold text-white shadow-lg shadow-kopi-mid/30 transition hover:bg-kopi-dark active:scale-[0.98] disabled:opacity-60"
           >
             Lanjut checkout
           </button>
@@ -497,6 +575,9 @@ export default function App() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [lastOrderSummary, setLastOrderSummary] = useState(null)
   const [showAllBeans, setShowAllBeans] = useState(false)
+  const [isCartClosing, setIsCartClosing] = useState(false)
+  const cartDrawerRef = useRef(null)
+  const cartCloseTimeoutRef = useRef(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -517,6 +598,48 @@ export default function App() {
     const timer = setTimeout(() => setToastMessage(''), 4000)
     return () => clearTimeout(timer)
   }, [toastMessage])
+
+  useEffect(() => {
+    return () => {
+      if (cartCloseTimeoutRef.current) {
+        clearTimeout(cartCloseTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isCartOpen) return
+    const handleClickOutside = (event) => {
+      if (cartDrawerRef.current && !cartDrawerRef.current.contains(event.target)) {
+        closeCartDrawer()
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isCartOpen])
+
+  const closeCartDrawer = (options = {}) => {
+    if (!isCartOpen) return
+
+    if (options.instant) {
+      if (cartCloseTimeoutRef.current) {
+        clearTimeout(cartCloseTimeoutRef.current)
+        cartCloseTimeoutRef.current = null
+      }
+      setIsCartClosing(false)
+      setIsCartOpen(false)
+      return
+    }
+
+    if (isCartClosing) return
+
+    setIsCartClosing(true)
+    cartCloseTimeoutRef.current = setTimeout(() => {
+      setIsCartOpen(false)
+      setIsCartClosing(false)
+      cartCloseTimeoutRef.current = null
+    }, 320)
+  }
 
   const handleAuthFormChange = (field, value) => {
     setAuthForm((prev) => ({ ...prev, [field]: value }))
@@ -614,11 +737,40 @@ export default function App() {
     setIsAddToCartModalOpen(false)
     setSelectedBean(null)
     setCartForm({ variant: '', quantity: 1 })
+    setIsCartClosing(false)
     setIsCartOpen(true)
   }
 
   const handleRemoveCartItem = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id))
+  }
+
+  const handleAdjustCartItemQuantity = (id, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                quantity: Math.max(1, item.quantity + delta)
+              }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    )
+  }
+
+  const handleToggleBeansView = () => {
+    setShowAllBeans((prev) => {
+      const next = !prev
+      if (!next && typeof window !== 'undefined') {
+        setTimeout(() => {
+          const marketplaceSection = document.getElementById('marketplace')
+          marketplaceSection?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 60)
+      }
+      return next
+    })
   }
 
   const handleOpenCheckout = () => {
@@ -629,13 +781,14 @@ export default function App() {
 
     setCheckoutForm({ recipientName: '', address: '', whatsapp: '', note: '' })
     setIsCheckoutModalOpen(true)
-    setIsCartOpen(false)
+    closeCartDrawer({ instant: true })
   }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     setCartItems([])
     setToastMessage('Berhasil keluar dari akun.')
+    closeCartDrawer({ instant: true })
   }
 
   const handleCheckoutFormChange = (field, value) => {
@@ -661,6 +814,7 @@ export default function App() {
         total
       })
       setToastMessage('Pesanan dicatat (placeholder). Kami hubungi via WhatsApp ya!')
+      window.open(WHATSAPP_LINK, '_blank', 'noopener,noreferrer')
       setCartItems([])
       setIsCheckoutModalOpen(false)
       setCheckoutForm({ recipientName: '', address: '', whatsapp: '', note: '' })
@@ -698,9 +852,9 @@ export default function App() {
             </a>
           </div>
           <div className="flex gap-3">
-            <button className="rounded-full border border-white/40 px-4 py-2 text-xs">
+            <a href="#ritual" className="rounded-full border border-white/40 px-4 py-2 text-xs hover:bg-white/10">
               Panduan Seduh
-            </button>
+            </a>
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
@@ -765,67 +919,106 @@ export default function App() {
                 </div>
               </div>
             </div>
-            <div className="rounded-[30px] bg-white/10 p-6 backdrop-blur">
-              <div className="aspect-[4/5] overflow-hidden rounded-2xl">
+            <div className="rounded-[30px] bg-white/10 p-6 backdrop-blur group">
+              <div className="overflow-hidden rounded-2xl">
                 <img
                   src="/img/mainHero.jpg"
                   alt="Barista menuang kopi"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
               </div>
               <p className="mt-4 text-sm text-white/80">
                 Disangrai batch kecil di Bandung, dikirim ke seluruh Indonesia.
               </p>
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-kopi-mid shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-white/90"
+              >
+                Chat via WhatsApp
+                <span aria-hidden>↗</span>
+              </a>
             </div>
           </div>
         </section>
       </div>
 
-      <main className="px-6 py-16 sm:px-10 md:px-16 lg:px-24 space-y-24">
-        <section className="grid gap-6 md:grid-cols-3" id="story">
-          {highlights.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-3xl border border-kopi-dark/10 bg-white p-6 shadow-[0_10px_40px_rgba(43,29,18,0.08)]"
+      <main className="px-6 py-16 sm:px-10 md:px-16 lg:px-24 space-y-20 lg:space-y-24">
+        <section className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] scroll-mt-28 md:scroll-mt-32" id="story">
+          <div className="rounded-3xl border border-kopi-dark/10 bg-white p-8 shadow-[0_10px_40px_rgba(43,29,18,0.08)]">
+            <p className="text-xs uppercase tracking-[0.4em] text-kopi-mid">Latar Belakang</p>
+            <h3 className="mt-3 text-3xl font-display text-kopi-dark">{storyOverview.title}</h3>
+            {storyOverview.body.map((paragraph) => (
+              <p key={paragraph} className="mt-4 text-kopi-dark/80 leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
+            <a
+              href={storyOverview.cta.href}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 inline-flex items-center gap-2 rounded-full border border-kopi-mid px-6 py-3 text-sm font-semibold text-kopi-mid transition hover:bg-kopi-mid hover:text-white"
             >
-              <h3 className="font-display text-2xl text-kopi-dark">{item.title}</h3>
-              <p className="mt-3 text-kopi-dark/80">{item.description}</p>
-            </div>
-          ))}
+              {storyOverview.cta.label}
+              <span aria-hidden>↗</span>
+            </a>
+          </div>
+          <div className="rounded-3xl border border-kopi-dark/10 bg-white p-8 shadow-[0_10px_40px_rgba(43,29,18,0.08)]">
+            <p className="text-xs uppercase tracking-[0.4em] text-kopi-mid">Tonggak Kopikir</p>
+            <ul className="mt-6 space-y-5">
+              {storyMilestones.map((milestone) => (
+                <li key={milestone.title} className="relative pl-6">
+                  <span className="absolute left-0 top-1 h-3 w-3 rounded-full bg-kopi-mid" />
+                  <p className="text-xs uppercase tracking-[0.3em] text-kopi-mid">{milestone.year}</p>
+                  <h4 className="mt-1 text-lg font-semibold text-kopi-dark">{milestone.title}</h4>
+                  <p className="text-sm text-kopi-dark/70">{milestone.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
-        <section className="space-y-12" id="marketplace">
-          <SectionTitle
-            eyebrow="Pasar Kopi"
-            title="Biji yang rasanya seperti cerita dari nusantara"
-            description="Setiap lot langsung dari koperasi petani, diprofil di Loring Smart Roaster, dan dikemas dalam kantong kompos."
-          />
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {visibleBeans.map((bean) => (
-              <BeanCard
-                key={bean.id}
-                bean={bean}
-                isAuthenticated={Boolean(session)}
-                onAddToCart={handleAddToCartRequest}
-              />
-            ))}
-          </div>
-          {beans.length > 6 && (
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setShowAllBeans((prev) => !prev)}
-                className="mt-4 inline-flex items-center gap-2 rounded-full border border-kopi-dark/20 px-6 py-3 text-sm font-semibold text-kopi-dark hover:bg-kopi-light"
-              >
-                {showAllBeans ? 'Tampilkan lebih sedikit' : 'Tampilkan lainnya'}
-                <span aria-hidden>{showAllBeans ? '↑' : '↓'}</span>
-              </button>
+        <section className="space-y-12 scroll-mt-24 md:scroll-mt-28" id="marketplace">
+          <div className="rounded-[36px] bg-[#3b2619] text-white p-8 md:p-12 shadow-[0_30px_80px_rgba(43,29,18,0.35)] space-y-10">
+            <SectionTitle
+              eyebrow="Pasar Kopi"
+              title="Biji yang rasanya seperti cerita dari nusantara"
+              description="Setiap lot langsung dari koperasi petani, diprofil di Loring Smart Roaster, dan dikemas dalam kantong kompos."
+              theme="dark"
+            />
+            <div className="max-w-6xl mx-auto">
+              <div className={`grid gap-8 beans-grid ${showAllBeans ? 'beans-expand' : ''}`}>
+                {visibleBeans.map((bean) => (
+                  <BeanCard
+                    key={bean.id}
+                    bean={bean}
+                    isAuthenticated={Boolean(session)}
+                    onAddToCart={handleAddToCartRequest}
+                  />
+                ))}
+              </div>
             </div>
-          )}
+            {beans.length > 6 && (
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleToggleBeansView}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10"
+                >
+                  {showAllBeans ? 'Tampilkan lebih sedikit' : 'Tampilkan lainnya'}
+                  <span aria-hidden>{showAllBeans ? '↑' : '↓'}</span>
+                </button>
+              </div>
+            )}
+          </div>
           <OrderSummaryCard summary={lastOrderSummary} />
         </section>
 
-        <section className="rounded-[32px] bg-white shadow-[0_30px_80px_rgba(43,29,18,0.12)] p-8 md:p-12 grid gap-10 md:grid-cols-[1.1fr_0.9fr]">
+        <section
+          id="ritual"
+          className="rounded-[32px] bg-white shadow-[0_30px_80px_rgba(43,29,18,0.12)] p-8 md:p-12 grid gap-10 md:grid-cols-[1.1fr_0.9fr] scroll-mt-28 md:scroll-mt-32"
+        >
           <div>
             <SectionTitle
               eyebrow="Ritual Seduh"
@@ -863,7 +1056,7 @@ export default function App() {
 
         <section
           id="contact"
-          className="rounded-[32px] bg-gradient-to-r from-kopi-mid to-[#a87b51] text-white p-10 grid gap-8 lg:grid-cols-2"
+          className="rounded-[32px] bg-gradient-to-r from-kopi-mid to-[#a87b51] text-white p-10 grid gap-8 lg:grid-cols-2 scroll-mt-28 md:scroll-mt-32"
         >
           <div>
             <p className="uppercase tracking-[0.4em] text-sm">Kemitraan & Kolaborasi</p>
@@ -898,12 +1091,15 @@ export default function App() {
                 className="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-white/60"
               />
             </div>
-            <button
-              type="submit"
-              className="w-full rounded-full bg-white px-6 py-3 font-semibold text-kopi-mid shadow-lg shadow-black/10"
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-6 py-3 font-semibold text-kopi-mid shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-white/90"
             >
-              Kirim pesan
-            </button>
+              Chat via WhatsApp
+              <span aria-hidden>↗</span>
+            </a>
           </form>
         </section>
       </main>
@@ -943,9 +1139,12 @@ export default function App() {
       <CartDrawer
         open={isCartOpen}
         items={cartItems}
-        onClose={() => setIsCartOpen(false)}
+        onClose={closeCartDrawer}
         onRemove={handleRemoveCartItem}
         onCheckout={handleOpenCheckout}
+        onQuantityChange={handleAdjustCartItemQuantity}
+        drawerRef={cartDrawerRef}
+        isClosing={isCartClosing}
       />
       <AddToCartModal
         open={isAddToCartModalOpen}

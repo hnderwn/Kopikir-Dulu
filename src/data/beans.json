@@ -77,7 +77,7 @@
     }
   },
   {
-    "id": "arabica-wamena",
+    "id": "arabica-papua-wamena",
     "name": "Arabica Papua Wamena",
     "origin": "Papua, Indonesia",
     "notes": ["herbal", "sweet spice", "light body"],
@@ -99,7 +99,7 @@
     }
   },
   {
-    "id": "arabica-linang-atu",
+    "id": "arabica-atu-lintang",
     "name": "Arabica Atu Lintang",
     "origin": "Aceh, Indonesia",
     "notes": ["herbal", "dark chocolate", "smooth"],
